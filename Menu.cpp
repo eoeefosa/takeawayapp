@@ -17,5 +17,3 @@ Item *Item::clone() const
 {
     return new Item(*this);
 }
-
-// Implement Appetiser, MainCourse, and Beverage member functions here
