@@ -21,26 +21,50 @@ Good luck!
 #include "Order.h"
 #include "Item.h"
 
+
 using namespace std;
+
+void displayInstructions() {
+    cout << "Welcome to the Takeaway App!" << endl;
+    cout << "Available commands:" << endl;
+    cout << " - menu: Display the menu" << endl;
+    cout << " - add <item_index> [item_index2 item_index3 ...]: Add item(s) to the order" << endl;
+    cout << " - remove <item_index>: Remove item from the order" << endl;
+    cout << " - checkout: Process the order and print receipt" << endl;
+    cout << " - help: Display this help message" << endl;
+    cout << " - exit: Exit the application" << endl;
+}
+
+
+void displayHelp() {
+    std::cout << "Available commands:" << std::endl;
+    std::cout << "menu - display the menu to the user" << std::endl;
+    std::cout << "add [INDEX] - add an item to the order by numeric index in the menu (starting at 1)" << std::endl;
+    std::cout << "remove [INDEX] - remove item from order by numeric index in the order (starting at 1)" << std::endl;
+    std::cout << "checkout - display the items in the user’s order, the price, and discount savings" << std::endl;
+    std::cout << "help - display a help menu for the user with the available options" << std::endl;
+    std::cout << "exit - terminate the program gracefully" << std::endl;
+}
+
 
 int main()
 {
     string userCommand;
     vector<string> parameters;
-
+    try {
     // Create a menu object from a CSV file
     Menu menu = Menu("menu.csv");
-
+    displayInstructions();
     // Create an order object
     Order order = Order();
 
     while (userCommand != "exit")
     {
         getline(cin, userCommand);
-        char *cstr = new char[userCommand.length() + 1];
+        char* cstr = new char[userCommand.length() + 1];
         strcpy(cstr, userCommand.c_str());
 
-        char *token;
+        char* token;
         token = strtok(cstr, " ");
 
         while (token != NULL)
@@ -50,7 +74,7 @@ int main()
         }
 
         string command = parameters[0];
-
+        try {
         if (command.compare("menu") == 0)
         {
             cout << menu.toString();
@@ -71,7 +95,7 @@ int main()
 
                     {
                         // Get the selected item from the menu and add it to the order
-                        Item *choice = menu.getItems()[itemIndex - 1]->clone();
+                        Item* choice = menu.getItems()[itemIndex - 1]->clone();
                         order.add(choice);
                     }
                     else
@@ -87,17 +111,56 @@ int main()
         }
         else if (command.compare("remove") == 0)
         {
+            if (parameters.size() > 1) {
+                size_t index = std::stoi(parameters[1]);
+                order.remove(index);
+            }
+            else {
+                std::cerr << "Missing index for removal." << std::endl;
+            }
+
         }
         else if (command.compare("checkout") == 0)
         {
+            std::cout << "===== Checkout =====" << std::endl;
+            std::cout << order.toString();
+            order.calculateTotal();
+
+            char choice;
+            std::cout << "Do you want to place your order? Type 'y' to confirm, or 'n' to go back and modify it." << std::endl;
+            std::cin >> choice;
+
+            if (choice == 'y') {
+                break;  // Exit the loop and end the program
+            }
         }
         else if (command.compare("help") == 0)
         {
+            displayHelp();
+        }
+        else if (command.compare("exit") == 0) {
+            // Implement any necessary cleanup before exiting
+            break;
+        }
+        else {
+            std::cerr << "Invalid command. Type 'help' for available options." << std::endl;
         }
 
-        parameters.clear();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+
+    parameters.clear();
+    delete[] cstr;
+}
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
     cout << "Press any key to quit...";
-    // std::getchar();
+   
+    std::getchar();
+
+    return 0;
 }
