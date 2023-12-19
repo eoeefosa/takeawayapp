@@ -1,4 +1,6 @@
 #include "Menu.h"
+#include <iostream>
+using namespace std;
 
 ItemList::~ItemList()
 {
@@ -8,12 +10,12 @@ ItemList::~ItemList()
     }
 }
 
-Menu:: Menu(const string &filePath)
+Menu::Menu(const string &filePath)
 {
     loadMenu(filePath);
 }
 
-const std::vector<Item *> &getItems::Menu() const
+const vector<Item *> &Menu::getItems() const
 {
     return items;
 }
@@ -23,7 +25,7 @@ size_t Menu::getItemsCount() const
     return items.size();
 }
 
-std::string Menu::toString() const override
+string Menu::toString() const
 {
     string menuStr;
     for (size_t i = 0; i < items.size(); ++i)
@@ -32,7 +34,8 @@ std::string Menu::toString() const override
     }
     return menuStr;
 }
-Menu::loadMenu(const string &filePath)
+
+void Menu::loadMenu(const string &filePath)
 {
     ifstream file(filePath);
     if (!file.is_open())
