@@ -56,12 +56,34 @@ int main()
             cout << menu.toString();
         }
         else if (command.compare("add") == 0)
-        {
-            Item *choice; // you need to instantiate this using the menu object!
-            order.add(choice);
+        { // Check if there is an item index specified
+            if (parameters.size() > 1)
+            {
+                // Loop through the parameters to add multiple items at once
+                for (size_t i = 1; i < parameters.size(); ++i)
+                {
+                    // Convert the parameter to an integer (item index)
+                    int itemIndex = stoi(parameters[i]);
 
-            // You may also wish to implement the ability to add multiple items at once!
-            // e.g. add 1 5 9
+                    // Check if the item index is valid
+                    // if (itemIndex >= 1 && itemIndex <= menu.items.size())
+                    if (itemIndex >= 1 && itemIndex <= menu.getItemsCount())
+
+                    {
+                        // Get the selected item from the menu and add it to the order
+                        Item *choice = menu.getItems()[itemIndex - 1]->clone();
+                        order.add(choice);
+                    }
+                    else
+                    {
+                        cerr << "Invalid item index: " << itemIndex << ". Skipping..." << endl;
+                    }
+                }
+            }
+            else
+            {
+                cerr << "Usage: add <item_index> [item_index2 item_index3 ...]" << endl;
+            }
         }
         else if (command.compare("remove") == 0)
         {
@@ -77,5 +99,5 @@ int main()
     }
 
     cout << "Press any key to quit...";
-    std::getchar();
+    // std::getchar();
 }

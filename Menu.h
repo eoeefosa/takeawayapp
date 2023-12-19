@@ -19,6 +19,8 @@ class Menu : public ItemList
 public:
     Menu(const std::string &filePath);
     std::string toString() const override;
+    size_t getItemsCount() const;
+    const std::vector<Item *> &getItems() const;
 
 private:
     void loadMenu(const std::string &filePath);
