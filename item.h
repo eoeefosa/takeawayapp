@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-
+/// Definition of Item class storing  the general information
+/// (name, calories, price) about the food and drink items available to purchase
 class Item
 {
 public:
@@ -18,6 +19,7 @@ protected:
     int calories;
 };
 
+/// @brief Definition of appetiser class containing two attributes; shareable and twoForOne.
 class Appetiser : public Item
 {
 public:
@@ -31,6 +33,7 @@ private:
     bool twoForOne;
 };
 
+/// @brief Definition of MainCourse class with no additional attributes
 class MainCourse : public Item
 {
 public:
@@ -38,6 +41,7 @@ public:
     Item *clone() const override;
 };
 
+/// @brief  Definition of Beverage class containing two attribute abv and volume.
 class Beverage : public Item
 {
 public:

@@ -1,5 +1,8 @@
 #include "Menu.h"
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 ItemList::~ItemList()
@@ -27,10 +30,12 @@ size_t Menu::getItemsCount() const
 
 string Menu::toString() const
 {
-    string menuStr;
+    string menuStr = "";
     for (size_t i = 0; i < items.size(); ++i)
     {
-        menuStr += "(" + to_string(i + 1) + ") " + items[i]->getDescription() + "\n";
+        //  menuStr += "(" + to_string(i + 1) + ") " + items[i]->getDescription() + "\n";
+
+        menuStr += "(" + to_string(i + 1) + ")" + items[i]->getDescription() + "\n";
     }
     return menuStr;
 }
@@ -40,7 +45,7 @@ void Menu::loadMenu(const string &filePath)
     ifstream file(filePath);
     if (!file.is_open())
     {
-        throw runtime_error("Error opening menu files: " + filePath);
+        throw runtime_error("Error opening menu file: " + filePath);
     }
 
     char type;
@@ -64,7 +69,10 @@ void Menu::loadMenu(const string &filePath)
             throw runtime_error("Invalid item type in menu file: " + type);
         }
 
-        items.push_back(newItem);
+        if (newItem != nullptr)
+        {
+            items.push_back(newItem);
+        }
     }
 
     file.close();
@@ -72,12 +80,54 @@ void Menu::loadMenu(const string &filePath)
 
 Appetiser *Menu::readAppetiser(std::ifstream &file)
 {
+
+    // return appetisers;
+    if (!file)
+    {
+        cerr << "Error reading data from the file." << endl;
+        return nullptr;
+    }
+
+    string line;
+    getline(file, line);
+
+    string itemye;
     string name;
-    double price;
-    int calories;
-    bool shareable;
-    bool twoForOne;
-    file >> name >> price >> calories >> shareable >> twoForOne;
+    string tempPrice;
+    double price = 0.0;
+    string tempCalories;
+    int calories = 0;
+    string tempShareableChar;
+    string temptwoForOnechar;
+
+    stringstream ss(line);
+
+    getline(ss, itemye, ',');
+
+    getline(ss, name, ',');
+    getline(ss, tempPrice, ',');
+    // price = std::stod(tempPrice);
+    try
+    {
+        price = std::stod(tempPrice);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to double: " << e.what() << endl;
+        // Handle the error as needed (possibly set a default value or terminate the program)
+        return nullptr; // or any other appropriate action
+    }
+
+    getline(ss, tempCalories, ',');
+    calories = atol(tempCalories.c_str());
+    getline(ss, tempShareableChar, ',');
+    getline(ss, temptwoForOnechar, ',');
+    bool shareable = (tempShareableChar == "y" || tempShareableChar == "Y");
+    bool twoForOne = (temptwoForOnechar == "y" || temptwoForOnechar == "Y");
+
+    cout << "Name: " << name << endl;
+    cout << "Calories: " << calories << ", ";
+    cout << "Price: £" << price << ", ";
     return new Appetiser(name, price, calories, shareable, twoForOne);
 }
 
