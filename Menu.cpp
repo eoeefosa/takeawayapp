@@ -133,20 +133,129 @@ Appetiser *Menu::readAppetiser(std::ifstream &file)
 
 MainCourse *Menu::readMainCourse(std::ifstream &file)
 {
+    if (!file)
+    {
+        cerr << "Error reading data from the file." << endl;
+        return nullptr;
+    }
+
+    string line;
+    getline(file, line);
+
+    string itemType;
     string name;
-    double price;
-    int calories;
-    file >> name >> price >> calories;
+    string tempPrice;
+    double price = 0.0;
+    string tempCalories;
+    int calories = 0;
+
+    stringstream ss(line);
+
+    getline(ss, itemType, ',');
+
+    getline(ss, name, ',');
+    getline(ss, tempPrice, ',');
+
+    try
+    {
+        price = std::stod(tempPrice);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to double: " << e.what() << endl;
+        return nullptr;
+    }
+
+    getline(ss, tempCalories, ',');
+    calories = atol(tempCalories.c_str());
+
+    cout << "Name: " << name << endl;
+    cout << "Calories: " << calories << ", ";
+    cout << "Price: £" << price << ", ";
+
     return new MainCourse(name, price, calories);
 }
 
-Beverage *Menu::readBeverage(ifstream &file)
+Beverage *Menu::readBeverage(std::ifstream &file)
 {
+    if (!file)
+    {
+        cerr << "Error reading data from the file." << endl;
+        return nullptr;
+    }
+
+    string line;
+    getline(file, line);
+
+    string itemType;
     string name;
-    double price;
-    int calories;
-    int volume;
-    double abv;
-    file >> name >> price >> calories >> volume >> abv;
+    string tempPrice;
+    double price = 0.0;
+    string tempCalories;
+    int calories = 0;
+    string tempVolume;
+    int volume = 0;
+    string tempABV;
+    double abv = 0.0;
+
+    stringstream ss(line);
+
+    getline(ss, itemType, ',');
+    getline(ss, name, ',');
+    getline(ss, tempPrice, ',');
+
+    try
+    {
+        price = std::stod(tempPrice);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to double: " << e.what() << endl;
+        return nullptr;
+    }
+
+    getline(ss, tempCalories, ',');
+
+    try
+    {
+        calories = std::stoi(tempCalories);
+        cout << calories;
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to integer: " << e.what() << endl;
+        return nullptr;
+    }
+    ss.ignore();
+    ss.ignore();
+    getline(ss, tempVolume, ',');
+
+    try
+    {
+        volume = std::stoi(tempVolume);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to integer: " << e.what() << endl;
+        return nullptr;
+    }
+    getline(ss, tempABV, ',');
+
+    try
+    {
+        abv = std::stod(tempABV);
+    }
+    catch (const std::invalid_argument &e)
+    {
+        cerr << "Error converting string to double: " << e.what() << endl;
+        return nullptr;
+    }
+
+    cout << "Name: " << name << endl;
+    cout << "Calories: " << calories << ", ";
+    cout << "Price: £" << price << ", ";
+    cout << "Volume: " << volume << " ml, ";
+    cout << "ABV: " << abv << "%" << endl;
+
     return new Beverage(name, price, calories, volume, abv);
 }
